@@ -24,6 +24,18 @@
     --texte-muted: rgba(255,255,255,0.55);
   }
 
+  /* BARRE DE PROGRESSION SCROLL */
+  #scroll-progress {
+    position: fixed;
+    top: 0; left: 0;
+    width: 0%;
+    height: 3px;
+    background: linear-gradient(to right, var(--vert), var(--or), var(--rouge));
+    z-index: 9999;
+    transition: width 0.1s linear;
+    box-shadow: 0 0 8px rgba(212,175,55,0.6);
+  }
+
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   html { scroll-behavior: smooth; }
@@ -187,12 +199,15 @@
   }
 
   .hero-content {
-    text-align: left;
+    text-align: center;
     position: relative;
     z-index: 2;
     padding: 2rem 4rem;
     max-width: 640px;
-    margin-left: 4vw;
+    margin-left: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
   .hero-eyebrow {
     font-size: 0.65rem;
@@ -232,6 +247,7 @@
   }
   .hero-cta {
     display: inline-flex;
+    justify-content: center;
     gap: 1.5rem;
     flex-wrap: wrap;
     opacity: 0;
@@ -354,9 +370,9 @@
     pointer-events: none;
   }
   .about-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 6rem;
+    display: flex;
+    flex-direction: row;
+    gap: 5rem;
     align-items: center;
     max-width: 1200px;
     margin: 0 auto;
@@ -364,40 +380,25 @@
     z-index: 1;
   }
   .about-images {
-    position: relative;
-    height: 550px;
+    flex-shrink: 0;
+    width: 420px;
+    height: 420px;
+    overflow: hidden;
+    border-radius: 4px;
   }
-  .about-img {
-    position: absolute;
-    border-radius: 2px;
-    object-fit: cover;
-    transition: transform 0.4s;
-  }
-  .about-img:hover { transform: scale(1.03); }
   .about-img.main {
-    width: 75%;
-    height: 75%;
-    top: 0; left: 0;
-    border: 3px solid var(--gris);
-    z-index: 2;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.6s;
   }
-  .about-img.secondary {
-    width: 55%;
-    height: 55%;
-    bottom: 0; right: 0;
-    border: 3px solid var(--rouge);
-    z-index: 3;
+  .about-img.main:hover { transform: scale(1.04); }
+  .about-img.secondary { display: none; }
+  .about-accent { display: none; }
+  .about-text {
+    flex: 1;
   }
-  .about-accent {
-    position: absolute;
-    top: 55%;
-    left: 65%;
-    width: 60px;
-    height: 60px;
-    background: var(--vert);
-    z-index: 1;
-  }
-  .about-text { }
   .about-text p {
     font-family: 'Cormorant Garamond', serif;
     font-size: 1.2rem;
@@ -473,15 +474,16 @@
   }
 
   .menu-photos {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1.5rem;
-    max-width: 1000px;
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    max-width: 750px;
     margin: 0 auto 4rem;
   }
   .menu-photo {
     position: relative;
-    aspect-ratio: 4/3;
+    flex: 1;
+    aspect-ratio: 1 / 1;
     overflow: hidden;
     border-radius: 2px;
   }
@@ -1029,15 +1031,16 @@
     nav.scrolled { padding: 0.8rem 2rem; }
     .nav-links { display: none; }
     section { padding: 5rem 2rem; }
-    .about-grid { grid-template-columns: 1fr; gap: 3rem; }
-    .about-images { height: 300px; }
+    .about-grid { flex-direction: column; gap: 2.5rem; }
+    .about-images { width: 100%; height: 320px; }
+    .menu-photos { max-width: 100%; }
     .menu-grid { grid-template-columns: 1fr; }
     .menu-item:nth-child(odd) { border-right: none; }
     .schedule-grid { grid-template-columns: repeat(2, 1fr); }
     .desserts-grid { grid-template-columns: 1fr; }
     .contact-social { flex-direction: column; align-items: center; }
     footer { flex-direction: column; text-align: center; }
-    .menu-photos { grid-template-columns: 1fr; }
+    
     .hero-title .line2 { -webkit-text-stroke-width: 1px; }
     .hero-pizza-wrap { display: none; }
     .hero-content { text-align: center; margin-left: 0; padding: 2rem; max-width: 100%; }
@@ -1046,11 +1049,106 @@
   @media (max-width: 600px) {
     .schedule-grid { grid-template-columns: 1fr; }
   }
+
+  /* COMPTE À REBOURS HERO */
+  .hero-countdown {
+    margin-top: 2.5rem;
+    opacity: 0;
+    animation: fadeUp 0.8s 1.1s forwards;
+    background: rgba(10,10,10,0.55);
+    border: 1px solid rgba(212,175,55,0.35);
+    backdrop-filter: blur(12px);
+    padding: 1.2rem 1.8rem;
+    display: inline-block;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-countdown::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(196,30,58,0.08), rgba(0,146,70,0.06));
+    pointer-events: none;
+  }
+  .hero-countdown::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(to right, #009246 33%, #ffffff 33%, #ffffff 66%, #C41E3A 66%);
+  }
+  .countdown-label {
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--texte-muted);
+    margin-bottom: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+  .countdown-location {
+    color: var(--or);
+    font-weight: 700;
+  }
+  .countdown-timer {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .countdown-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 52px;
+  }
+  .countdown-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    font-weight: 900;
+    color: var(--blanc);
+    line-height: 1;
+    transition: transform 0.15s, color 0.15s;
+  }
+  .countdown-num.tick {
+    transform: scale(1.15);
+    color: var(--or);
+  }
+  .countdown-unit {
+    font-size: 0.55rem;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--texte-muted);
+    margin-top: 0.2rem;
+  }
+  .countdown-sep {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    font-weight: 900;
+    color: var(--rouge);
+    margin-bottom: 0.8rem;
+    animation: sepPulse 1s ease-in-out infinite;
+  }
+  @keyframes sepPulse {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.2; }
+  }
+  .countdown-day-label {
+    margin-top: 0.7rem;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.9rem;
+    font-style: italic;
+    color: rgba(255,255,255,0.45);
+  }
 </style>
 </head>
 <body>
 
 <!-- Curseur custom -->
+<div id="scroll-progress"></div>
 <div class="cursor" id="cursor"></div>
 <div class="cursor-ring" id="cursor-ring"></div>
 
@@ -1196,6 +1294,37 @@
       <a href="#menu" class="btn-primary"><span>Voir la carte</span></a>
       <a href="#localisation" class="btn-outline">Nous trouver</a>
     </div>
+
+    <!-- Compte à rebours prochain passage -->
+    <div class="hero-countdown" id="hero-countdown">
+      <div class="countdown-label">
+        <span class="countdown-flame">🍕</span>
+        Prochain passage à
+        <span class="countdown-location" id="countdown-location">…</span>
+      </div>
+      <div class="countdown-timer">
+        <div class="countdown-block">
+          <span class="countdown-num" id="cd-days">--</span>
+          <span class="countdown-unit">jours</span>
+        </div>
+        <div class="countdown-sep">:</div>
+        <div class="countdown-block">
+          <span class="countdown-num" id="cd-hours">--</span>
+          <span class="countdown-unit">heures</span>
+        </div>
+        <div class="countdown-sep">:</div>
+        <div class="countdown-block">
+          <span class="countdown-num" id="cd-mins">--</span>
+          <span class="countdown-unit">min</span>
+        </div>
+        <div class="countdown-sep">:</div>
+        <div class="countdown-block">
+          <span class="countdown-num" id="cd-secs">--</span>
+          <span class="countdown-unit">sec</span>
+        </div>
+      </div>
+      <div class="countdown-day-label" id="countdown-day-label"></div>
+    </div>
   </div>
   <div class="hero-scroll">
     <span class="scroll-text">Défiler</span>
@@ -1267,15 +1396,15 @@
   <!-- Quelques photos -->
   <div class="menu-photos reveal" style="margin-bottom: 4rem;">
     <div class="menu-photo">
-      <img src="img/pizza7.jpg" alt="Pizza jambon champignons" onerror="this.parentElement.style.background='#1a1a1a'">
+      <img src="img/pizza1.jpg" alt="Pizza jambon fromages" onerror="this.parentElement.style.background='#1a1a1a'">
       <div class="menu-photo-label">Garnitures généreuses</div>
     </div>
     <div class="menu-photo">
-      <img src="img/pizza6.jpg" alt="Pizza bolognaise" onerror="this.parentElement.style.background='#222'">
+      <img src="img/pizza3.jpg" alt="Pizza jambon cru" onerror="this.parentElement.style.background='#222'">
       <div class="menu-photo-label">Tout cuisiné maison</div>
     </div>
     <div class="menu-photo">
-      <img src="img/pizza8.jpg" alt="Pizza saumon" onerror="this.parentElement.style.background='#1e1e1e'">
+      <img src="img/pizza7.jpg" alt="Pizza chorizo" onerror="this.parentElement.style.background='#1e1e1e'">
       <div class="menu-photo-label">Pâte artisanale</div>
     </div>
   </div>
@@ -1457,24 +1586,24 @@
   <div class="galerie-track-wrapper">
     <div class="galerie-track">
       <div class="galerie-item"><img src="img/pizza1.jpg" alt="Pizza fromage" onerror="this.parentElement.style.background='#1a1a1a'"><div class="galerie-item-overlay"></div></div>
-      <div class="galerie-item"><img src="img/pizza7.jpg" alt="Pizza jambon champignons" onerror="this.parentElement.style.background='#222'"><div class="galerie-item-overlay"></div></div>
-      <div class="galerie-item"><img src="img/pizza4.jpg" alt="Pizza poivrons chorizo" onerror="this.parentElement.style.background='#1e1e1e'"><div class="galerie-item-overlay"></div></div>
-      <div class="galerie-item"><img src="img/pizza8.jpg" alt="Pizza saumon" onerror="this.parentElement.style.background='#1a1a1a'"><div class="galerie-item-overlay"></div></div>
-      <div class="galerie-item"><img src="img/pizza6.jpg" alt="Pizza bolognaise" onerror="this.parentElement.style.background='#222'"><div class="galerie-item-overlay"></div></div>
-      <div class="galerie-item"><img src="img/pizza3.jpg" alt="Pizza courgettes" onerror="this.parentElement.style.background='#1e1e1e'"><div class="galerie-item-overlay"></div></div>
-      <div class="galerie-item"><img src="img/pizza2.jpg" alt="Pizza jambon" onerror="this.parentElement.style.background='#1a1a1a'"><div class="galerie-item-overlay"></div></div>
-      <div class="galerie-item"><img src="img/pizza5.jpg" alt="Calzone sucrée" onerror="this.parentElement.style.background='#222'"><div class="galerie-item-overlay"></div></div>
-      <div class="galerie-item"><img src="img/camion.jpg" alt="Le camion" onerror="this.parentElement.style.background='#1e1e1e'"><div class="galerie-item-overlay"></div></div>
+      <div class="galerie-item"><img src="img/pizza2.jpg" alt="Pizza jambon fromages" onerror="this.parentElement.style.background='#222'"><div class="galerie-item-overlay"></div></div>
+      <div class="galerie-item"><img src="img/pizza3.jpg" alt="Pizza jambon cru" onerror="this.parentElement.style.background='#1e1e1e'"><div class="galerie-item-overlay"></div></div>
+      <div class="galerie-item"><img src="img/pizza4.jpg" alt="Pizza bolognaise" onerror="this.parentElement.style.background='#1a1a1a'"><div class="galerie-item-overlay"></div></div>
+      <div class="galerie-item"><img src="img/pizza5.jpg" alt="Pizza sucrée" onerror="this.parentElement.style.background='#222'"><div class="galerie-item-overlay"></div></div>
+      <div class="galerie-item"><img src="img/pizza6.jpg" alt="Pizza poivrons" onerror="this.parentElement.style.background='#1e1e1e'"><div class="galerie-item-overlay"></div></div>
+      <div class="galerie-item"><img src="img/pizza7.jpg" alt="Pizza chozizo" onerror="this.parentElement.style.background='#1a1a1a'"><div class="galerie-item-overlay"></div></div>
+      <div class="galerie-item"><img src="img/pizza8.jpg" alt="Pizza Burrata" onerror="this.parentElement.style.background='#222'"><div class="galerie-item-overlay"></div></div>
+      <div class="galerie-item"><img src="img/pizza9.jpg" alt="Pizza chèvre miel" onerror="this.parentElement.style.background='#1e1e1e'"><div class="galerie-item-overlay"></div></div>
       <!-- Duplicate for seamless infinite loop -->
       <div class="galerie-item"><img src="img/pizza1.jpg" alt="Pizza fromage" onerror="this.parentElement.style.background='#1a1a1a'"><div class="galerie-item-overlay"></div></div>
-      <div class="galerie-item"><img src="img/pizza7.jpg" alt="Pizza jambon champignons" onerror="this.parentElement.style.background='#222'"><div class="galerie-item-overlay"></div></div>
-      <div class="galerie-item"><img src="img/pizza4.jpg" alt="Pizza poivrons chorizo" onerror="this.parentElement.style.background='#1e1e1e'"><div class="galerie-item-overlay"></div></div>
-      <div class="galerie-item"><img src="img/pizza8.jpg" alt="Pizza saumon" onerror="this.parentElement.style.background='#1a1a1a'"><div class="galerie-item-overlay"></div></div>
-      <div class="galerie-item"><img src="img/pizza6.jpg" alt="Pizza bolognaise" onerror="this.parentElement.style.background='#222'"><div class="galerie-item-overlay"></div></div>
-      <div class="galerie-item"><img src="img/pizza3.jpg" alt="Pizza courgettes" onerror="this.parentElement.style.background='#1e1e1e'"><div class="galerie-item-overlay"></div></div>
-      <div class="galerie-item"><img src="img/pizza2.jpg" alt="Pizza jambon" onerror="this.parentElement.style.background='#1a1a1a'"><div class="galerie-item-overlay"></div></div>
-      <div class="galerie-item"><img src="img/pizza5.jpg" alt="Calzone sucrée" onerror="this.parentElement.style.background='#222'"><div class="galerie-item-overlay"></div></div>
-      <div class="galerie-item"><img src="img/camion.jpg" alt="Le camion" onerror="this.parentElement.style.background='#1e1e1e'"><div class="galerie-item-overlay"></div></div>
+      <div class="galerie-item"><img src="img/pizza2.jpg" alt="Pizza jambon fromages" onerror="this.parentElement.style.background='#222'"><div class="galerie-item-overlay"></div></div>
+      <div class="galerie-item"><img src="img/pizza3.jpg" alt="Pizza jambon cru" onerror="this.parentElement.style.background='#1e1e1e'"><div class="galerie-item-overlay"></div></div>
+      <div class="galerie-item"><img src="img/pizza4.jpg" alt="Pizza bolognaise" onerror="this.parentElement.style.background='#1a1a1a'"><div class="galerie-item-overlay"></div></div>
+      <div class="galerie-item"><img src="img/pizza5.jpg" alt="Pizza sucrée" onerror="this.parentElement.style.background='#222'"><div class="galerie-item-overlay"></div></div>
+      <div class="galerie-item"><img src="img/pizza6.jpg" alt="Pizza poivrons" onerror="this.parentElement.style.background='#1e1e1e'"><div class="galerie-item-overlay"></div></div>
+      <div class="galerie-item"><img src="img/pizza7.jpg" alt="Pizza chorizo" onerror="this.parentElement.style.background='#1a1a1a'"><div class="galerie-item-overlay"></div></div>
+      <div class="galerie-item"><img src="img/pizza8.jpg" alt="Pizza Burrata" onerror="this.parentElement.style.background='#222'"><div class="galerie-item-overlay"></div></div>
+      <div class="galerie-item"><img src="img/pizza9.jpg" alt="Pizza chèvre miel" onerror="this.parentElement.style.background='#1e1e1e'"><div class="galerie-item-overlay"></div></div>
     </div>
   </div>
 </section>
@@ -1574,6 +1703,15 @@
 </footer>
 
 <script>
+  // Barre de progression scroll
+  const progressBar = document.getElementById('scroll-progress');
+  window.addEventListener('scroll', () => {
+    const scrollTop = window.scrollY;
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+    progressBar.style.width = progress + '%';
+  });
+
   // Cursor
   const cursor = document.getElementById('cursor');
   const ring = document.getElementById('cursor-ring');
@@ -1653,7 +1791,7 @@
       if (e.isIntersecting) {
         const nums = document.querySelectorAll('.stat-num');
         animateCounter(nums[0], 30, '+');
-        animateCounter(nums[1], 5, '');
+        animateCounter(nums[1], 4, '');
         animateCounter(nums[2], 100, '%');
         statsObserver.disconnect();
       }
@@ -1661,6 +1799,99 @@
   }, { threshold: 0.5 });
   const statsEl = document.querySelector('.about-stats');
   if (statsEl) statsObserver.observe(statsEl);
+  // ── COMPTE À REBOURS PROCHAIN PASSAGE ──────────────────────────────
+  // Semaines A = semaines ISO paires, B = impaires
+  // Schedule: { dayOfWeek (0=dim,1=lun…), hour, weekType ('A','B','*'), location }
+  const schedule = [
+    { day: 2, hour: 18, week: 'A', lieu: 'Boisville-la-Saint-Père' },
+    { day: 2, hour: 18, week: 'B', lieu: 'Bailleau-le-Pin'         },
+    { day: 3, hour: 18, week: 'A', lieu: 'Cernay'                  },
+    { day: 3, hour: 18, week: 'B', lieu: 'Dénonville'              },
+    { day: 4, hour: 18, week: '*', lieu: 'Santeuil'                },
+    { day: 5, hour: 18, week: '*', lieu: 'Nogent-le-Phaye'         },
+  ];
+
+  function getISOWeek(d) {
+    const date = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+    date.setUTCDate(date.getUTCDate() + 4 - (date.getUTCDay() || 7));
+    const yearStart = new Date(Date.UTC(date.getUTCFullYear(), 0, 1));
+    return Math.ceil((((date - yearStart) / 86400000) + 1) / 7);
+  }
+
+  function getWeekType(d) {
+    return getISOWeek(d) % 2 === 0 ? 'B' : 'A';
+  }
+
+  function findNextPassage() {
+    const now = new Date();
+    // Cherche dans les 14 prochains jours
+    for (let offset = 0; offset < 14; offset++) {
+      const candidate = new Date(now);
+      candidate.setDate(now.getDate() + offset);
+      candidate.setHours(0, 0, 0, 0);
+      const dayOfWeek = candidate.getDay() === 0 ? 7 : candidate.getDay(); // lundi=1…dim=7
+      const wType = getWeekType(candidate);
+
+      for (const s of schedule) {
+        const sDay = s.day; // 1=lun, 2=mar, 3=mer, 4=jeu, 5=ven
+        if (sDay !== dayOfWeek) continue;
+        if (s.week !== '*' && s.week !== wType) continue;
+
+        // Heure de début du service
+        const target = new Date(candidate);
+        target.setHours(s.hour, 0, 0, 0);
+        if (target > now) {
+          return { target, lieu: s.lieu, candidate };
+        }
+      }
+    }
+    return null;
+  }
+
+  const pad = n => String(n).padStart(2, '0');
+  const dayNames = ['', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche'];
+
+  function updateCountdown() {
+    const next = findNextPassage();
+    if (!next) return;
+
+    const { target, lieu, candidate } = next;
+    const diff = target - new Date();
+    if (diff <= 0) { updateCountdown(); return; }
+
+    const totalSecs = Math.floor(diff / 1000);
+    const secs  = totalSecs % 60;
+    const mins  = Math.floor(totalSecs / 60) % 60;
+    const hours = Math.floor(totalSecs / 3600) % 24;
+    const days  = Math.floor(totalSecs / 86400);
+
+    // Mise à jour des chiffres avec effet "tick" sur les secondes
+    const secsEl = document.getElementById('cd-secs');
+    const prevSecs = secsEl.textContent;
+    if (prevSecs !== pad(secs)) {
+      secsEl.classList.remove('tick');
+      void secsEl.offsetWidth; // reflow
+      secsEl.classList.add('tick');
+      setTimeout(() => secsEl.classList.remove('tick'), 200);
+    }
+
+    document.getElementById('cd-days').textContent  = pad(days);
+    document.getElementById('cd-hours').textContent = pad(hours);
+    document.getElementById('cd-mins').textContent  = pad(mins);
+    secsEl.textContent                               = pad(secs);
+    document.getElementById('countdown-location').textContent = lieu;
+
+    // Label sous le timer
+    const dow = candidate.getDay() === 0 ? 7 : candidate.getDay();
+    const dateStr = candidate.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' });
+    document.getElementById('countdown-day-label').textContent =
+      days === 0 ? `C'est aujourd'hui — ${dateStr} !`
+                 : `${dayNames[dow]} ${dateStr}`;
+  }
+
+  updateCountdown();
+  setInterval(updateCountdown, 1000);
+  // ────────────────────────────────────────────────────────────────────
 </script>
 </body>
 </html>
